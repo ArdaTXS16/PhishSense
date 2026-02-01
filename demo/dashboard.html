@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishSense – Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f1419;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #1a1f2e;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #00d4ff;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #00d4ff;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background-color: #1a1f2e;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        section h2 {
+            color: #00d4ff;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 0.5rem;
+        }
+
+        .welcome-text {
+            color: #b0b0b0;
+            font-size: 1rem;
+        }
+
+        .progress-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #2a3039;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: #252d3d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement {
+            background-color: #252d3d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #00d4ff;
+            transition: transform 0.3s;
+        }
+
+        .achievement:hover {
+            transform: translateY(-5px);
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            color: #00d4ff;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .achievement-desc {
+            color: #b0b0b0;
+            font-size: 0.85rem;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .quick-link {
+            background-color: #252d3d;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: #00d4ff;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .quick-link:hover {
+            background-color: #00d4ff;
+            color: #0f1419;
+        }
+
+        footer {
+            background-color: #1a1f2e;
+            text-align: center;
+            padding: 1.5rem;
+            color: #b0b0b0;
+            border-top: 1px solid #2a3039;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🛡️ PhishSense</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#modules">Modules</a></li>
+                <li><a href="#simulation">Simulation</a></li>
+                <li><a href="#ranking">Ranking</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Welcome Section -->
+        <section id="welcome">
+            <h2>Welcome to Your Learning Dashboard</h2>
+            <p class="welcome-text">
+                Great to see you again! Track your progress through cybersecurity training modules, 
+                unlock achievements, and climb the ranking leaderboard. Stay vigilant against phishing threats!
+            </p>
+        </section>
+
+        <!-- Quick Stats -->
+        <section id="stats">
+            <h2>Quick Stats</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Modules Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12h 45m</div>
+                    <div class="stat-label">Total Learning Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">14 Days</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Overview -->
+        <section id="progress">
+            <h2>Module Progress Overview</h2>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Email Spoofing Basics</span>
+                    <span>85%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>URL Analysis & Detection</span>
+                    <span>60%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Advanced Phishing Tactics</span>
+                    <span>40%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%"></div>
+                </div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-label">
+                    <span>Overall Progress</span>
+                    <span>62%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 62%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chart Section -->
+        <section id="chart">
+            <h2>Module Completion Chart</h2>
+            <div class="chart-container">
+                <canvas id="completionChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Achievements / Gamification -->
+        <section id="achievements">
+            <h2>Your Achievements</h2>
+            <div class="achievements">
+                <div class="achievement">
+                    <div class="achievement-icon">🏅</div>
+                    <div class="achievement-name">First Steps</div>
+                    <div class="achievement-desc">Complete your first module</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-name">7-Day Streak</div>
+                    <div class="achievement-desc">Learn for 7 consecutive days</div>
+                </div>
+                <div class="achievement">
+                    <div class="achievement-icon">🎯</div>
+                    <div class="achievement-name">Quiz Master</div>
+                    <div class="achievement-desc">Score 100% on 5 quizzes</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Links -->
+        <section id="quicklinks">
+            <h2>Quick Navigation</h2>
+            <div class="quick-links">
+                <a href="#modules" class="quick-link">📚 View Modules</a>
+                <a href="#simulation" class="quick-link">🎮 Start Simulation</a>
+                <a href="#ranking" class="quick-link">📊 View Rankings</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 PhishSense. All rights reserved. Protecting users from phishing threats.</p>
+    </footer>
+
+    <script>
+        // Initialize Chart.js
+        const ctx = document.getElementById('completionChart').getContext('2d');
+        const completionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Email Spoofing Basics',
+                    'URL Analysis & Detection',
+                    'Advanced Phishing Tactics',
+                    'Social Engineering',
+                    'Defense Strategies'
+                ],
+                datasets: [{
+                    data: [85, 60, 40, 25, 70],
+                    backgroundColor: [
+                        '#00d4ff',
+                        '#0099cc',
+                        '#006699',
+                        '#ff6b6b',
+                        '#4ecdc4'
+                    ],
+                    borderColor: '#1a1f2e',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e0e0e0',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
