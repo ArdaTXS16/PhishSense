@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishSense – Learning Modules</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background: #007acc;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        main {
+            padding: 20px;
+        }
+        section {
+            margin: 20px 0;
+        }
+        article {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        article:hover {
+            transform: scale(1.02);
+        }
+        .module-title {
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .difficulty {
+            font-weight: bold;
+            color: #007acc;
+        }
+        .progress {
+            background: #e0e0e0;
+            border-radius: 5px;
+            height: 10px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            background: #007acc;
+            height: 100%;
+            width: 0; /* Placeholder for progress */
+        }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background: #007acc;
+            color: white;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="modules.html" class="active">Modules</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="ranking.html">Ranking</a>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Phishing Awareness Modules</h1>
+        <p>Explore our interactive learning modules designed to enhance your understanding of phishing and cybersecurity.</p>
+        
+        <section id="modules-overview">
+            <h2>Modules Overview</h2>
+            <article>
+                <h3 class="module-title">Phishing Basics</h3>
+                <p>Learn the fundamentals of phishing attacks and how to recognize them.</p>
+                <p class="difficulty">Difficulty: Beginner</p>
+                <p>Estimated Duration: 30 minutes</p>
+                <div class="progress"><div class="progress-bar" style="width: 20%;"></div></div>
+                <button onclick="alert('Starting Phishing Basics Module')">Start Module</button>
+            </article>
+            <article>
+                <h3 class="module-title">Email Security & Red Flags</h3>
+                <p>Understand how to secure your email and identify suspicious messages.</p>
+                <p class="difficulty">Difficulty: Intermediate</p>
+                <p>Estimated Duration: 45 minutes</p>
+                <div class="progress"><div class="progress-bar" style="width: 40%;"></div></div>
+                <button onclick="alert('Starting Email Security & Red Flags Module')">Start Module</button>
+            </article>
+            <article>
+                <h3 class="module-title">Social Engineering Techniques</h3>
+                <p>Explore various social engineering tactics used by attackers.</p>
+                <p class="difficulty">Difficulty: Advanced</p>
+                <p>Estimated Duration: 60 minutes</p>
+                <div class="progress"><div class="progress-bar" style="width: 10%;"></div></div>
+                <button onclick="alert('Starting Social Engineering Techniques Module')">Start Module</button>
+            </article>
+            <!-- Additional modules can be added here -->
+        </section>
+
+        <section>
+            <h2>Module Structure</h2>
+            <p>Each module consists of video lessons, chapter checks, and progress tracking to enhance your learning experience.</p>
+        </section>
+
+        <section>
+            <h2>Progress & Gamification Info</h2>
+            <p>Earn points, level up, and collect badges as you complete modules and enhance your cybersecurity skills.</p>
+        </section>
+    </main>
+    <footer>
+        <p>PhishSense © 2026</p>
+    </footer>
+    <script>
+        // Simple interaction for demo purposes
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.backgroundColor = '#007acc';
+                this.style.color = 'white';
+            });
+        });
+    </script>
+</body>
+</html>

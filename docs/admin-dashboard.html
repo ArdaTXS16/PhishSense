@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishSense – Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            margin-right: auto;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+            font-size: 0.95rem;
+        }
+
+        header a:hover {
+            opacity: 0.8;
+        }
+
+        header a.active {
+            border-bottom: 2px solid #fbbf24;
+            padding-bottom: 0.5rem;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .stat-card.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .stat-card.success {
+            border-left-color: #10b981;
+        }
+
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        section h3 {
+            font-size: 1.5rem;
+            color: #1e3a8a;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f3f4f6;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .badge.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge.warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .alerts {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .alerts h4 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .alerts p {
+            color: #78350f;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-users {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .risk-users h4 {
+            color: #991b1b;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-users p {
+            color: #7f1d1d;
+            margin-bottom: 0.25rem;
+        }
+
+        footer {
+            background: #1e3a8a;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .filter-controls {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-controls input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        .filter-controls input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            header nav {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            main {
+                padding: 0 1rem;
+            }
+
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>PhishSense</h1>
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="modules.html">Modules</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="ranking.html">Ranking</a>
+            <a href="admin-dashboard.html" class="active">Admin</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-header">
+            <h2>Administrator Dashboard</h2>
+            <p>Overview of user progress and system statistics</p>
+        </div>
+
+        <!-- Organization Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="value">284</div>
+            </div>
+            <div class="stat-card success">
+                <h3>Active Users</h3>
+                <div class="value">156</div>
+            </div>
+            <div class="stat-card">
+                <h3>Completed Modules</h3>
+                <div class="value">1,240</div>
+            </div>
+            <div class="stat-card warning">
+                <h3>Avg Success Rate</h3>
+                <div class="value">78%</div>
+            </div>
+        </div>
+
+        <!-- User Progress Overview -->
+        <section>
+            <h3>📊 User Progress Overview</h3>
+            <div class="filter-controls">
+                <input type="text" id="userFilter" placeholder="Filter by username...">
+            </div>
+            <div class="table-wrapper">
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Completed Modules</th>
+                            <th>Success Rate</th>
+                            <th>Status</th>
+                            <th>Last Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>john.smith</td>
+                            <td>12/15</td>
+                            <td>92%</td>
+                            <td><span class="badge success">Excellent</span></td>
+                            <td>2 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>emma.johnson</td>
+                            <td>10/15</td>
+                            <td>85%</td>
+                            <td><span class="badge success">Good</span></td>
+                            <td>1 day ago</td>
+                        </tr>
+                        <tr>
+                            <td>michael.brown</td>
+                            <td>8/15</td>
+                            <td>72%</td>
+                            <td><span class="badge warning">Fair</span></td>
+                            <td>3 days ago</td>
+                        </tr>
+                        <tr>
+                            <td>sarah.davis</td>
+                            <td>15/15</td>
+                            <td>96%</td>
+                            <td><span class="badge success">Excellent</span></td>
+                            <td>4 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>robert.wilson</td>
+                            <td>5/15</td>
+                            <td>48%</td>
+                            <td><span class="badge danger">At Risk</span></td>
+                            <td>5 days ago</td>
+                        </tr>
+                        <tr>
+                            <td>lisa.martin</td>
+                            <td>11/15</td>
+                            <td>80%</td>
+                            <td><span class="badge success">Good</span></td>
+                            <td>6 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td>david.taylor</td>
+                            <td>7/15</td>
+                            <td>62%</td>
+                            <td><span class="badge warning">Fair</span></td>
+                            <td>1 week ago</td>
+                        </tr>
+                        <tr>
+                            <td>jennifer.anderson</td>
+                            <td>14/15</td>
+                            <td>94%</td>
+                            <td><span class="badge success">Excellent</span></td>
+                            <td>12 hours ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section>
+            <h3>📈 Analytics Overview</h3>
+            <div class="charts-grid">
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: #374151;">Completion Rate Per Module</h4>
+                    <div class="chart-container">
+                        <canvas id="completionChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem; color: #374151;">Success Rate Distribution</h4>
+                    <div class="chart-container">
+                        <canvas id="successChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risk & Awareness Indicators -->
+        <section>
+            <h3>⚠️ Risk & Awareness Indicators</h3>
+            <div style="display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="risk-users">
+                    <h4>High-Risk Users (Success Rate &lt; 60%)</h4>
+                    <p>• robert.wilson – 48% success rate</p>
+                    <p>• james.miller – 55% success rate</p>
+                    <p>• patricia.lee – 52% success rate</p>
+                    <p><strong>Action:</strong> Schedule additional training sessions</p>
+                </div>
+                <div class="alerts">
+                    <h4>Training Gaps Identified</h4>
+                    <p>• Email Security Module: 15 users below 70%</p>
+                    <p>• Password Management: 8 users incomplete</p>
+                    <p>• Social Engineering: 22 users below average</p>
+                    <p><strong>Recommendation:</strong> Focus supplemental training on these areas</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Administrative Notes -->
+        <section>
+            <h3>📝 Administrative Notes & Alerts</h3>
+            <div class="alerts">
+                <h4>🔔 Upcoming Training Deadlines</h4>
+                <p><strong>Q1 Security Refresh:</strong> March 15, 2026 – 45 users pending completion</p>
+                <p><strong>Annual Compliance Update:</strong> March 30, 2026 – All staff required</p>
+            </div>
+            <div class="alerts" style="margin-top: 1rem;">
+                <h4>📢 System Notices</h4>
+                <p><strong>Phishing Simulation Campaign:</strong> New campaign scheduled for March 10, 2026</p>
+                <p><strong>Platform Maintenance:</strong> Scheduled maintenance on March 5, 2026 at 22:00 UTC</p>
+                <p><strong>Report Generation:</strong> Monthly compliance reports available for download</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 PhishSense. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Completion Rate Chart
+        const completionCtx = document.getElementById('completionChart').getContext('2d');
+        new Chart(completionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Email Security', 'Password Mgmt', 'Phishing Detection', 'Data Protection', 'Compliance'],
+                datasets: [{
+                    label: 'Completion Rate (%)',
+                    data: [92, 88, 78, 85, 81],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { beginAtZero: true, max: 100 }
+                }
+            }
+        });
+
+        // Success Rate Distribution Chart
+        const successCtx = document.getElementById('successChart').getContext('2d');
+        new Chart(successCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Excellent (85%+)', 'Good (70-85%)', 'Fair (55-70%)', 'At Risk (<55%)'],
+                datasets: [{
+                    data: [42, 35, 18, 5],
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Simple table filter
+        document.getElementById('userFilter').addEventListener('keyup', function(e) {
+            const filterValue = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#userTable tbody tr');
+            rows.forEach(row => {
+                const username = row.cells[0].textContent.toLowerCase();
+                row.style.display = username.includes(filterValue) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
